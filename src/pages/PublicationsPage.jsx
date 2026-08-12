@@ -1,10 +1,13 @@
 import PublicationItem from '../components/PublicationItem.jsx'
 import SectionHeading from '../components/SectionHeading.jsx'
 import { publications } from '../content/publications.js'
+import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 
-function PublicationsSection() {
+function PublicationsPage() {
+  useDocumentTitle('Publications')
+
   return (
-    <section id="publications" className="border-y border-slate-200 bg-academic-50">
+    <section className="min-h-[70vh] bg-academic-50">
       <div className="mx-auto max-w-5xl px-6 py-20 sm:py-24 lg:px-8">
         <SectionHeading
           eyebrow="Research output"
@@ -26,4 +29,4 @@ function PublicationsSection() {
   )
 }
 
-export default PublicationsSection
+export default PublicationsPage

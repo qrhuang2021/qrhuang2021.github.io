@@ -1,8 +1,12 @@
+import { Link } from 'react-router-dom'
 import { profile } from '../content/profile.js'
+import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 
-function HomeSection() {
+function HomePage() {
+  useDocumentTitle()
+
   return (
-    <section id="home" className="mx-auto max-w-5xl px-6 py-20 sm:py-28 lg:px-8">
+    <section className="mx-auto max-w-5xl px-6 py-20 sm:py-28 lg:px-8">
       <div className="grid items-center gap-12 md:grid-cols-[1fr_auto]">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-academic-600">
@@ -30,6 +34,12 @@ function HomeSection() {
                 {link.label}
               </a>
             ))}
+            <Link
+              className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition-colors hover:border-academic-600 hover:text-academic-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-academic-600"
+              to="/blog"
+            >
+              Read the blog
+            </Link>
           </div>
         </div>
 
@@ -55,4 +65,4 @@ function HomeSection() {
   )
 }
 
-export default HomeSection
+export default HomePage
