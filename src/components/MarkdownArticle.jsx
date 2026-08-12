@@ -73,7 +73,7 @@ function MarkdownImage({ alt, src }) {
 
 function MarkdownPreformatted({ children }) {
   return (
-    <pre className="my-6 overflow-x-auto rounded-xl bg-slate-900 p-5 text-sm leading-6 text-slate-100 [&_code]:bg-transparent [&_code]:p-0 [&_code]:text-inherit">
+    <pre className="my-6 overflow-x-auto rounded-xl border border-academic-200 bg-academic-50 p-5 text-sm leading-6 text-academic-900 [&_code]:bg-transparent [&_code]:p-0 [&_code]:text-inherit">
       {children}
     </pre>
   )
