@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import profileImage from '../assets/profile.png'
 import { profile } from '../content/profile.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 
@@ -43,12 +44,13 @@ function HomePage() {
           </div>
         </div>
 
-        <div
-          aria-hidden="true"
-          className="grid size-36 place-items-center rounded-3xl border border-academic-200 bg-academic-50 text-4xl font-semibold tracking-tight text-academic-700 shadow-sm sm:size-44"
-        >
-          {profile.initials}
-        </div>
+        <img
+          alt={`${profile.name} portrait`}
+          className="size-36 rounded-3xl border border-academic-200 object-cover shadow-sm sm:size-44"
+          height="176"
+          src={profileImage}
+          width="176"
+        />
       </div>
 
       <div className="mt-20 border-t border-slate-200 pt-10">
