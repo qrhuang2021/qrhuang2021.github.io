@@ -5,7 +5,7 @@ function NotFoundPage() {
   useDocumentTitle('Page not found')
 
   return (
-    <section className="mx-auto min-h-[70vh] max-w-5xl px-6 py-20 lg:px-8">
+    <section className="mx-auto min-h-[70vh] max-w-5xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
       <p className="text-sm font-semibold uppercase tracking-[0.18em] text-academic-600">
         404
       </p>

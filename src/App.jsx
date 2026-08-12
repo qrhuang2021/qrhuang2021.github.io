@@ -12,7 +12,7 @@ const BlogPostPage = lazy(() => import('./pages/BlogPostPage.jsx'))
 
 function RouteLoading() {
   return (
-    <div className="mx-auto min-h-[60vh] max-w-5xl px-6 py-20 text-slate-500 lg:px-8">
+    <div className="mx-auto min-h-[60vh] max-w-5xl px-4 py-14 text-slate-500 sm:px-6 sm:py-20 lg:px-8">
       Loading article…
     </div>
   )

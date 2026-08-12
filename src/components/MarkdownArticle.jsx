@@ -26,7 +26,7 @@ function MarkdownLink({ children, href }) {
 
   return (
     <a
-      className="font-medium text-academic-700 underline decoration-academic-200 transition-colors hover:decoration-academic-700"
+      className="break-words font-medium text-academic-700 underline decoration-academic-200 transition-colors hover:decoration-academic-700"
       href={href}
       rel={external ? 'noreferrer' : undefined}
       target={external ? '_blank' : undefined}
@@ -46,7 +46,7 @@ function MarkdownOrderedList({ children }) {
 
 function MarkdownBlockquote({ children }) {
   return (
-    <blockquote className="my-6 border-l-4 border-academic-200 bg-academic-50 px-5 py-1 text-slate-600">
+    <blockquote className="my-6 border-l-4 border-academic-200 bg-academic-50 px-4 py-1 text-slate-600 sm:px-5">
       {children}
     </blockquote>
   )
@@ -73,7 +73,7 @@ function MarkdownImage({ alt, src }) {
 
 function MarkdownPreformatted({ children }) {
   return (
-    <pre className="my-6 overflow-x-auto rounded-xl border border-academic-200 bg-academic-50 p-5 text-sm leading-6 text-academic-900 [&_code]:bg-transparent [&_code]:p-0 [&_code]:text-inherit">
+    <pre className="my-6 max-w-full overflow-x-auto rounded-xl border border-academic-200 bg-academic-50 p-4 text-sm leading-6 text-academic-900 sm:p-5 [&_code]:bg-transparent [&_code]:p-0 [&_code]:text-inherit">
       {children}
     </pre>
   )
@@ -96,7 +96,7 @@ const markdownPlugins = [remarkGfm]
 
 function MarkdownArticle({ children }) {
   return (
-    <div className="max-w-3xl">
+    <div className="min-w-0 max-w-3xl break-words">
       <ReactMarkdown components={markdownComponents} remarkPlugins={markdownPlugins}>
         {children}
       </ReactMarkdown>

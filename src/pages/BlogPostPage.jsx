@@ -38,7 +38,7 @@ function BlogPostPage() {
 
   if (!post) {
     return (
-      <section className="mx-auto min-h-[70vh] max-w-5xl px-6 py-20 lg:px-8">
+      <section className="mx-auto min-h-[70vh] max-w-5xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-academic-600">
           Not found
         </p>
@@ -53,16 +53,16 @@ function BlogPostPage() {
   }
 
   return (
-    <article className="mx-auto min-h-[70vh] max-w-5xl px-6 py-20 sm:py-24 lg:px-8">
+    <article className="mx-auto min-h-[70vh] max-w-5xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
       <Link className="text-sm font-semibold text-academic-700 hover:underline" to="/blog">
         ← Back to Blog
       </Link>
 
-      <header className="mt-10 max-w-3xl border-b border-slate-200 pb-10">
+      <header className="mt-8 max-w-3xl border-b border-slate-200 pb-8 sm:mt-10 sm:pb-10">
         <time className="text-sm text-slate-500" dateTime={post.date}>
           {formatPostDate(post.date)}
         </time>
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-academic-900 sm:text-5xl">
+        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-academic-900 sm:text-4xl lg:text-5xl">
           {post.title}
         </h1>
         <p className="mt-5 text-lg leading-8 text-slate-600">{post.summary}</p>

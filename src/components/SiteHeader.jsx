@@ -17,7 +17,7 @@ function navLinkClassName({ isActive }) {
 function SiteHeader() {
   return (
     <header className="sticky top-0 z-10 border-b border-slate-200/80 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-6 px-6 py-4 lg:px-8">
+      <div className="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-4 lg:px-8">
         <Link
           className="text-base font-semibold tracking-tight text-academic-900 transition-colors hover:text-academic-600"
           to="/"
@@ -25,8 +25,8 @@ function SiteHeader() {
           {profile.name}
         </Link>
 
-        <nav aria-label="Primary navigation">
-          <ul className="flex items-center gap-5 text-sm font-medium text-slate-600 sm:gap-7">
+        <nav aria-label="Primary navigation" className="w-full sm:w-auto">
+          <ul className="flex items-center justify-between gap-4 text-sm font-medium text-slate-600 sm:justify-start sm:gap-7">
             {navigation.map((item) => (
               <li key={item.to}>
                 <NavLink

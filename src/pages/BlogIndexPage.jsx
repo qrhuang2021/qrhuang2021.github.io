@@ -8,14 +8,14 @@ function BlogIndexPage() {
   useDocumentTitle('Blog')
 
   return (
-    <section className="mx-auto min-h-[70vh] max-w-5xl px-6 py-20 sm:py-24 lg:px-8">
+    <section className="mx-auto min-h-[70vh] max-w-5xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
       <SectionHeading
         eyebrow="Notes"
         title="Blog"
         description="Occasional notes on research, implementation, and ideas in progress."
       />
 
-      <div className="mt-10 border-t border-slate-200">
+      <div className="mt-8 border-t border-slate-200 sm:mt-10">
         {posts.length > 0 ? (
           posts.map((post) => (
             <article key={post.slug} className="border-b border-slate-200 py-7">

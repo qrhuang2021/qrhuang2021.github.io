@@ -8,14 +8,14 @@ function PublicationsPage() {
 
   return (
     <section className="min-h-[70vh] bg-academic-50">
-      <div className="mx-auto max-w-5xl px-6 py-20 sm:py-24 lg:px-8">
+      <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <SectionHeading
           eyebrow="Research output"
           title="Publications"
           description="Selected work on CAD, boundary representation, and geometric learning."
         />
 
-        <div className="mt-10 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:mt-10 sm:p-6 lg:p-8">
           {publications.length > 0 ? (
             publications.map((publication) => (
               <PublicationItem key={publication.id} publication={publication} />
