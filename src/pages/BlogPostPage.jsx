@@ -62,10 +62,15 @@ function BlogPostPage() {
         <time className="text-sm text-slate-500" dateTime={post.date}>
           {formatPostDate(post.date)}
         </time>
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight text-academic-900 sm:text-4xl lg:text-5xl">
+        <h1
+          className="mt-4 text-3xl font-semibold tracking-tight text-academic-900 sm:text-4xl lg:text-5xl"
+          lang={post.lang}
+        >
           {post.title}
         </h1>
-        <p className="mt-5 text-lg leading-8 text-slate-600">{post.summary}</p>
+        <p className="mt-5 text-lg leading-8 text-slate-600" lang={post.lang}>
+          {post.summary}
+        </p>
       </header>
 
       <div className="pt-8">

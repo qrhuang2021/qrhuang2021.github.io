@@ -10,6 +10,7 @@ function PublicationsPage() {
     <section className="min-h-[70vh] bg-academic-50">
       <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <SectionHeading
+          as="h1"
           eyebrow="Research output"
           title="Publications"
           description="Selected work on CAD, boundary representation, and geometric learning."

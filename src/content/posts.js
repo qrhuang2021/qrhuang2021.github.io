@@ -3,12 +3,16 @@ export const posts = [
     slug: 'deploy-personal-website-with-github',
     title: '通过 GitHub 部署个人网站',
     date: '2026-08-12',
-    summary: '',
+    lang: 'zh-CN',
+    language: '中文',
+    summary: '理解网页访问原理，并将静态网站或 React/Vite 项目部署到 GitHub Pages。',
   },
   {
     slug: 'welcome',
     title: 'Welcome',
     date: '2026-08-12',
+    lang: 'en',
+    language: 'English',
     summary: 'A short introduction to this website and the notes that will live here.',
   },
 ]

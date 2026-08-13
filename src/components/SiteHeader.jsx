@@ -1,25 +1,30 @@
 import { Link, NavLink } from 'react-router-dom'
 import { profile } from '../content/profile.js'
+import { publications } from '../content/publications.js'
 
 const navigation = [
   { label: 'Home', to: '/' },
-  { label: 'Publications', to: '/publications' },
+  ...(publications.length > 0
+    ? [{ label: 'Publications', to: '/publications' }]
+    : []),
   { label: 'Blog', to: '/blog' },
 ]
 
 function navLinkClassName({ isActive }) {
   const base =
-    'transition-colors hover:text-academic-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-academic-600'
+    'inline-flex min-h-8 items-center border-b-2 border-transparent transition-colors hover:text-academic-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-academic-600'
 
-  return isActive ? `${base} text-academic-700` : base
+  return isActive
+    ? `${base} border-academic-600 text-academic-700`
+    : base
 }
 
 function SiteHeader() {
   return (
     <header className="sticky top-0 z-10 border-b border-slate-200/80 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-4 lg:px-8">
+      <div className="mx-auto flex max-w-5xl flex-col gap-1 px-4 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-3 lg:px-8">
         <Link
-          className="text-base font-semibold tracking-tight text-academic-900 transition-colors hover:text-academic-600"
+          className="inline-flex min-h-8 items-center text-base font-semibold tracking-tight text-academic-900 transition-colors hover:text-academic-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-academic-600"
           to="/"
         >
           {profile.name}

@@ -10,6 +10,7 @@ function BlogIndexPage() {
   return (
     <section className="mx-auto min-h-[70vh] max-w-5xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
       <SectionHeading
+        as="h1"
         eyebrow="Notes"
         title="Blog"
         description="Occasional notes on research, implementation, and ideas in progress."
@@ -19,10 +20,16 @@ function BlogIndexPage() {
         {posts.length > 0 ? (
           posts.map((post) => (
             <article key={post.slug} className="border-b border-slate-200 py-7">
-              <time className="text-sm text-slate-500" dateTime={post.date}>
-                {formatPostDate(post.date)}
-              </time>
-              <h2 className="mt-2 text-xl font-semibold text-slate-900">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
+                <time dateTime={post.date}>{formatPostDate(post.date)}</time>
+                <span aria-label={`Article language: ${post.language}`}>
+                  {post.language}
+                </span>
+              </div>
+              <h2
+                className="mt-2 text-xl font-semibold text-slate-900"
+                lang={post.lang}
+              >
                 <Link
                   className="transition-colors hover:text-academic-700 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-academic-600"
                   to={`/blog/${post.slug}`}
@@ -30,7 +37,10 @@ function BlogIndexPage() {
                   {post.title}
                 </Link>
               </h2>
-              <p className="mt-3 max-w-2xl leading-7 text-slate-600">
+              <p
+                className="mt-3 max-w-2xl leading-7 text-slate-600"
+                lang={post.lang}
+              >
                 {post.summary}
               </p>
               <Link
