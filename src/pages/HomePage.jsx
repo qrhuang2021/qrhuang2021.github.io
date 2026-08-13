@@ -70,6 +70,16 @@ function HomePage() {
           <h1 className="text-4xl font-semibold tracking-tight text-academic-900 sm:text-5xl lg:text-6xl">
             {profile.name}
           </h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-500">
+            My given name, Qirui (
+            <span className="font-medium text-slate-700" lang="zh-Hans">
+              期瑞
+            </span>
+            ; Qīruì, &ldquo;chee-rway&rdquo;), combines Qi (
+            <span lang="zh-Hans">期</span>), meaning hope, and Rui (
+            <span lang="zh-Hans">瑞</span>), meaning good fortune&mdash;as in{' '}
+            <span lang="zh-Hans">瑞雪</span>, a snowfall seen as a good omen.
+          </p>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
             I am a {profile.stage} at the{' '}
             <BiographyLink href={profile.affiliation.lab.href}>
