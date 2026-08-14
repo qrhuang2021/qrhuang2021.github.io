@@ -13,18 +13,18 @@
 
 两种身份观察 library 的角度不同，带来的需求也不同：
 
-- **Library User**：希望使用已有能力。
+- **Library User**：使用已有能力。
     - *训练*：从头训练一个 model，或者从 checkpoint 继续训练。
     - *推理*：加载 pretrained model，对单个或一批 samples 进行推理。
     - *评估*：在指定 benchmark 上评估 model，并获得结构化结果。
     - *集成*：将已有能力集成到 downstream application 中。
-- **Library Developer**：希望扩展 library。
+- **Library Developer**：搭建或扩展 library。
     - *模型*：实现新的 model architecture、encoder 或 decoding strategy。
     - *数据*：添加新的 dataset、data transform 或 batch construction 方式。
     - *训练*：添加新的 loss、optimizer 或 training strategy。
     - *评估*：添加新的 benchmark、metric 或 evaluation protocol。
 
-## Public API Design
+## Library User: Public API
 
 首先从 Library User 的角度设计 `dl_lib` 的 public API。三个需求分别对应三个 API，“集成”可以通过组合已有 API 实现：
 
@@ -89,3 +89,33 @@ evaluate(
 - `Benchmark`：评估 model 所使用的数据与规则。
 - `EvaluationConfig`：执行 benchmark evaluation 所使用的配置。
 - `EvaluationResult`：benchmark evaluation 的结构化结果。
+
+
+## Library Developer
+
+Library Developer 可以从事 core development 或 extension development。
+
+### Core Development
+
+
+Core 的设计需要同时考虑两种使用方式。一方面，它通过 public API 为 Library User 提供稳定且易用的 workflows；另一方面，它需要保持 modular 和 composable，使 Library Developer 能够以较低成本实现 built-in 或 out-of-core extensions。前者决定 Core 对外暴露什么，后者决定 Core 内部如何组织。
+
+所以，Core 是实现稳定 public workflows、并支撑 built-in 与 out-of-core extensions 的最小共享机制集合。
+
+
+
+### Extension Development
+
+#### Built-in Extensions
+
+与 library 一同开发和发布的 model、loss、dataset、metric 等。
+
+#### Out-of-Core Extensions
+
+在 library repo 之外实现，但复用 library contracts 和 components。
+
+
+## 延伸阅读
+
+- Yuxin Wu, [How to Maintain Clean Core APIs for Research](https://ppwwyyxx.com/blog/2022/Maintain-Clean-Core-APIs-for-Research/)
+- John Ousterhout, [A Philosophy of Software Design](https://go7hic.github.io/A-Philosophy-of-Software-Design)
