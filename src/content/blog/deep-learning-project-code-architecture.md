@@ -9,7 +9,7 @@
 
 这是对使用方式的逻辑划分，而不是对人的固定分类。一个 deep learning project 可能只有一名参与者，但他仍然会在不同场景下切换身份。
 
-## 需求分析
+## Requirements Analysis
 
 两种身份观察 library 的角度不同，带来的需求也不同：
 
@@ -24,9 +24,9 @@
     - *训练*：添加新的 loss、optimizer 或 training strategy。
     - *评估*：添加新的 benchmark、metric 或 evaluation protocol。
 
-## Public Interface
+## Public API Design
 
-首先从 Library User 的角度设计 `dl_lib` 的 public interface。三个需求分别对应三个 API，“集成”可以通过组合已有 API 实现：
+首先从 Library User 的角度设计 `dl_lib` 的 public API。三个需求分别对应三个 API，“集成”可以通过组合已有 API 实现：
 
 ```text
 Library User 的 4 类需求
@@ -41,13 +41,33 @@ Library User 的 4 类需求
 ```python
 from dl_lib import train, pipeline, evaluate
 
-# 训练
-run = train(config="config")
+# 训练 → train()
+result = train(config)
 
-# 推理：model 在 predictor 创建时加载，随后可以重复调用
-predictor = pipeline(model="model")
-result = predictor([input1, input2])
+# 推理 → pipeline()
+predictor = pipeline(model)
+result = predictor(inputs)
 
-# 评估
-report = evaluate(model="model", benchmark="benchmark")
+# 评估 → evaluate()
+result = evaluate(model, benchmark)
 ```
+
+进一步明确每个 API 的 input 和 output types，可以得到一份最小的 API contract：
+
+```python
+train(spec: TrainingSpec) -> TrainingResult
+pipeline(model: Model) -> InferencePipeline
+InferencePipeline.__call__(inputs: InferenceInput) -> InferenceResult
+evaluate(model: Model, benchmark: Benchmark) -> EvaluationResult
+```
+
+这些 types 的含义如下：
+
+- `TrainingSpec`：一次训练所需的完整规格。
+- `TrainingResult`：一次训练的结构化结果，其中包含产出的 `Model`。
+- `Model`：可被加载并用于推理或评估的 pretrained model。
+- `InferencePipeline`：持有已加载 `Model`、可重复调用的推理能力。
+- `InferenceInput`：一次 inference 调用的完整输入。
+- `InferenceResult`：与输入对应的推理结果。
+- `Benchmark`：评估 model 所使用的数据与规则。
+- `EvaluationResult`：benchmark evaluation 的结构化结果。
