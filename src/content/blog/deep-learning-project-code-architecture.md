@@ -46,7 +46,7 @@ result = train(config)
 
 # 推理 → pipeline()
 predictor = pipeline(model)
-result = predictor(inputs)
+result = predictor(data)
 
 # 评估 → evaluate()
 result = evaluate(model, benchmark)
@@ -55,19 +55,35 @@ result = evaluate(model, benchmark)
 进一步明确每个 API 的 input 和 output types，可以得到一份最小的 API contract：
 
 ```python
-train(spec: TrainingSpec) -> TrainingResult
-pipeline(model: Model) -> InferencePipeline
-InferencePipeline.__call__(inputs: InferenceInput) -> InferenceResult
-evaluate(model: Model, benchmark: Benchmark) -> EvaluationResult
+train(
+    config: TrainingConfig
+) -> TrainingResult
+
+pipeline(
+    model: Model,
+    config: InferenceConfig | None = None
+) -> InferencePipeline
+
+InferencePipeline.__call__(
+    data: InferenceInput
+) -> InferenceResult
+
+evaluate(
+    model: Model,
+    benchmark: Benchmark,
+    config: EvaluationConfig | None = None,
+) -> EvaluationResult
 ```
 
 这些 types 的含义如下：
 
-- `TrainingSpec`：一次训练所需的完整规格。
+- `TrainingConfig`：一次训练所需的完整配置。
 - `TrainingResult`：一次训练的结构化结果，其中包含产出的 `Model`。
 - `Model`：可被加载并用于推理或评估的 pretrained model。
+- `InferenceConfig`：运行 inference pipeline 所使用的配置。
 - `InferencePipeline`：持有已加载 `Model`、可重复调用的推理能力。
 - `InferenceInput`：一次 inference 调用的完整输入。
 - `InferenceResult`：与输入对应的推理结果。
 - `Benchmark`：评估 model 所使用的数据与规则。
+- `EvaluationConfig`：执行 benchmark evaluation 所使用的配置。
 - `EvaluationResult`：benchmark evaluation 的结构化结果。
