@@ -16,10 +16,38 @@
 - **Library User**：希望使用已有能力。
     - *训练*：从头训练一个 model，或者从 checkpoint 继续训练。
     - *推理*：加载 pretrained model，对单个或一批 samples 进行推理。
-    - *评估*：在指定 dataset 上运行 evaluation protocol，并获得结构化结果。
-    - *部署*：导出能够脱离训练环境使用的 model，并集成到下游 application 中。
+    - *评估*：在指定 benchmark 上评估 model，并获得结构化结果。
+    - *集成*：将已有能力集成到 downstream application 中。
 - **Library Developer**：希望扩展 library。
     - *模型*：实现新的 model architecture、encoder 或 decoding strategy。
     - *数据*：添加新的 dataset、data transform 或 batch construction 方式。
     - *训练*：添加新的 loss、optimizer 或 training strategy。
-    - *评估*：添加新的 metric 或 evaluation protocol。
+    - *评估*：添加新的 benchmark、metric 或 evaluation protocol。
+
+## Public Interface
+
+首先从 Library User 的角度设计 `dl_lib` 的 public interface。三个需求分别对应三个 API，“集成”可以通过组合已有 API 实现：
+
+```text
+Library User 的 4 类需求
+├── 训练   → train()
+├── 推理   → pipeline()
+├── 评估   → evaluate()
+└── 集成   → 组合已有 API，不新增核心 API
+```
+
+参考 [Transformers](https://huggingface.co/docs/transformers)，`dl_lib` 提供三个核心 API：
+
+```python
+from dl_lib import train, pipeline, evaluate
+
+# 训练
+run = train(config="config")
+
+# 推理：model 在 predictor 创建时加载，随后可以重复调用
+predictor = pipeline(model="model")
+result = predictor([input1, input2])
+
+# 评估
+report = evaluate(model="model", benchmark="benchmark")
+```
