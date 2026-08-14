@@ -4,6 +4,7 @@ import ScrollToTop from './components/ScrollToTop.jsx'
 import SiteFooter from './components/SiteFooter.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
 import BlogIndexPage from './pages/BlogIndexPage.jsx'
+import BookmarksPage from './pages/BookmarksPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 import PublicationsPage from './pages/PublicationsPage.jsx'
@@ -30,6 +31,7 @@ function App() {
             <Route path="/publications" element={<PublicationsPage />} />
             <Route path="/blog" element={<BlogIndexPage />} />
             <Route path="/blog/:slug" element={<BlogPostPage />} />
+            <Route path="/bookmarks" element={<BookmarksPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>

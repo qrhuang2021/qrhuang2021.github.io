@@ -8,6 +8,7 @@ const navigation = [
     ? [{ label: 'Publications', to: '/publications' }]
     : []),
   { label: 'Blog', to: '/blog' },
+  { label: 'Bookmarks', to: '/bookmarks' },
 ]
 
 function navLinkClassName({ isActive }) {
