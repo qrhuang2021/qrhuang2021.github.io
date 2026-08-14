@@ -61,11 +61,12 @@ train(
 
 pipeline(
     model: Model,
-    config: InferenceConfig | None = None
+    config: PipelineConfig | None = None
 ) -> InferencePipeline
 
 InferencePipeline.__call__(
-    data: InferenceInput
+    data: InferenceInput,
+    config: InferenceConfig | None = None
 ) -> InferenceResult
 
 evaluate(
@@ -80,9 +81,10 @@ evaluate(
 - `TrainingConfig`：一次训练所需的完整配置。
 - `TrainingResult`：一次训练的结构化结果，其中包含产出的 `Model`。
 - `Model`：可被加载并用于推理或评估的 pretrained model。
-- `InferenceConfig`：运行 inference pipeline 所使用的配置。
+- `PipelineConfig`：创建和初始化 inference pipeline 所使用的配置。
 - `InferencePipeline`：持有已加载 `Model`、可重复调用的推理能力。
 - `InferenceInput`：一次 inference 调用的完整输入。
+- `InferenceConfig`：执行一次 inference 调用所使用的配置。
 - `InferenceResult`：与输入对应的推理结果。
 - `Benchmark`：评估 model 所使用的数据与规则。
 - `EvaluationConfig`：执行 benchmark evaluation 所使用的配置。
