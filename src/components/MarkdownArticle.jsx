@@ -1,5 +1,7 @@
+import { isValidElement } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import MermaidDiagram from './MermaidDiagram.jsx'
 
 function MarkdownHeadingTwo({ children }) {
   return (
@@ -52,9 +54,11 @@ function MarkdownBlockquote({ children }) {
   )
 }
 
-function MarkdownCode({ children }) {
+function MarkdownCode({ children, className }) {
   return (
-    <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.9em] text-slate-800">
+    <code
+      className={`${className ?? ''} rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[0.9em] text-slate-800`}
+    >
       {children}
     </code>
   )
@@ -72,6 +76,13 @@ function MarkdownImage({ alt, src }) {
 }
 
 function MarkdownPreformatted({ children }) {
+  const codeElement = Array.isArray(children) ? children[0] : children
+  const language = isValidElement(codeElement) ? codeElement.props.className : ''
+
+  if (language?.split(' ').includes('language-mermaid')) {
+    return <MermaidDiagram chart={String(codeElement.props.children)} />
+  }
+
   return (
     <pre className="my-6 max-w-full overflow-x-auto rounded-xl border border-academic-200 bg-academic-50 p-4 text-sm leading-6 text-academic-900 sm:p-5 [&_code]:bg-transparent [&_code]:p-0 [&_code]:text-inherit">
       {children}

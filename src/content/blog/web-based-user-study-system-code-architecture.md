@@ -1,6 +1,16 @@
-本文直接讨论一个 Web-based User Study 系统的代码架构设计，并以 Markdown 创意写作作为具体案例。Participant 可以领取 Task 并提交写作结果，也可以脱离 Study 自由写作；Researcher 则负责设计 Study、发布 Tasks 和查看实验数据。
+本文直接讨论一个 Web-based User Study 系统的代码架构设计，并以 Markdown 创意写作作为具体案例。Participant 可以领取 Task 并在 Workspace 中完成写作，也可以脱离 Study 创建 Workspace 自由写作；Researcher 则负责管理 Participants、设计 Study 和发布 Tasks。
 
-创意写作足够简单，可以让讨论集中在多用户、角色权限、任务流程和数据隔离等核心问题；同时，它又包含 Study、Session、Task 和 Response，能够代表一类通用的 User Study 系统。
+先明确 system boundary：Web 系统负责实验运行与数据采集，不负责实验结果分析。分析由外部 scripts 或 notebooks 读取 database snapshot 或 exported data 完成。
+
+```mermaid
+flowchart LR
+    participant["Participant"] -->|"完成写作"| webSystem["User Study Web System"]
+    researcher["Researcher"] -->|"管理实验"| webSystem
+    webSystem -->|"存储实验数据"| database["Database"]
+    database -->|"Snapshot / Export"| analysis["External Scripts / Notebooks"]
+```
+
+创意写作足够简单，可以让讨论集中在多用户、角色权限、任务流程和数据隔离等核心问题；同时，Study、Task、Workspace 也能代表一类通用的 User Study 系统。
 
 ## 代码架构设计流程
 
@@ -27,13 +37,13 @@
 系统中的用户统一表示为 `User`，并通过 `role` 区分两种角色：
 
 - **PARTICIPANT**：参与 Study、领取 Task，并使用 Markdown 完成写作；也可以不参与 Study，直接自由写作。
-- **RESEARCHER**：创建和管理 Study 与 Tasks，并查看 Participants 提交的实验数据。
+- **RESEARCHER**：管理 Participants，并创建和管理 Study 与 Tasks。
 
-任务写作的核心流程是：Participant 登录后选择 Study，开始或继续一次 Session，领取 Task，在 Markdown 编辑器中写作并实时预览，最后提交 Response。自由写作不依赖 Study、Session 或 Task，Participant 可以直接创建和保存自己的 Document。
+Participant 的界面由多个 Workspaces 组成，每个 Workspace 包含一个 Markdown Document。领取 Task 会创建一个关联该 Task 的 Workspace；自由写作也会创建 Workspace，但不关联任何 Task。Participant 可以在 Workspace 中编辑、实时预览和保存 Document，并提交任务写作结果。
 
-系统需要提供身份认证、基于角色的权限控制和 Participant 数据隔离；支持 Study 与 Task 管理、Session 状态维护、Markdown 编辑与实时预览、Response 提交，以及独立 Document 的创建和保存。Participant 只能访问自己的 Sessions、Responses 和 Documents，Researcher 可以管理 Studies 并查看相关实验数据。
+系统需要提供身份认证、基于角色的权限控制和 Participant 数据隔离；支持 Participant、Study 与 Task 管理、Workspace 创建与提交，以及 Markdown 编辑和实时预览。Participant 只能访问自己的 Workspaces 和 Documents，Researcher 可以管理 Participants 和 Studies，并查看基本运行状态。
 
-暂不涉及搜索、分享、多人协作、AI 写作、跨设备同步和自动化数据分析。
+系统暂不涉及搜索、分享、多人协作、AI 写作和跨设备同步。
 
 ## 2. Use Case Analysis
 
@@ -46,62 +56,130 @@ Use Case = Actor + Action + Flow + Result
 | ID | Actor | Action | Result |
 |---|---|---|---|
 | UC-01 | Participant / Researcher | 登录系统 | 系统确认身份并授予对应角色的访问权限 |
-| UC-02 | Participant | 查看 Studies | 系统显示当前可参与的 Studies |
-| UC-03 | Participant | 开始或继续 Session | 系统创建或恢复一次实验过程 |
-| UC-04 | Participant | 领取 Task | 系统分配 Task，并建立待完成的 Response |
-| UC-05 | Participant | 完成并提交 Response | 系统保存 Markdown 写作结果并关联当前 Session 与 Task |
-| UC-06 | Participant | 自由写作 | 系统保存一个不关联 Study 的 Document |
+| UC-02 | Participant | 查看 Studies | 系统显示当前可参与的 Studies 及其 Tasks |
+| UC-03 | Participant | 领取 Task | 系统创建一个关联该 Task 的 Workspace 和 Document |
+| UC-04 | Participant | 自由写作 | 系统创建一个不关联 Task 的 Workspace 和 Document |
+| UC-05 | Participant | 查看 Workspaces | 系统显示该 Participant 拥有的 Workspaces |
+| UC-06 | Participant | 编辑并保存 Workspace | 系统保存 Markdown Document，并允许提交任务写作结果 |
 | UC-07 | Researcher | 管理 Study | 系统允许创建、编辑或关闭 Study 及其 Tasks |
-| UC-08 | Researcher | 查看实验数据 | 系统显示 Participants、Sessions 和 Responses |
+| UC-08 | Researcher | 管理 Participants | 系统允许创建、禁用或删除 Participant |
 
-其中，Flow 描述 Actor 完成目标时与系统交互的主要过程。这里选择三个具有代表性的 Use Cases 展开：
+其中，Flow 描述 Actor 完成目标时与系统交互的主要过程。这里只展开最具代表性的 `UC-03`：
 
-**UC-03 开始或继续 Session**
+**UC-03 领取 Task**
 
-1. Participant 登录并选择一个可参与的 Study。
-2. 系统验证 Participant 是否可以参与该 Study。
-3. 系统查找尚未完成的 Session；如果不存在，则创建新的 Session。
-4. 系统将 Session 与当前 Participant 和 Study 关联，并进入任务页面。
+1. Participant 选择一个可参与的 Study，并查看其中的 Tasks。
+2. Participant 领取一个 Task，系统验证 Study 和 Task 当前是否可用。
+3. 系统创建归属于该 Participant 的 Workspace，并将其与 Task 关联。
+4. 系统在 Workspace 中创建空白 Document，然后打开写作界面。
 
-如果 Study 已关闭或 Participant 没有参与权限，系统拒绝创建 Session。
-
-**UC-05 完成并提交 Response**
-
-1. Participant 打开已领取的 Task，系统验证当前 Session 和 Response 的归属关系。
-2. 系统打开与 Response 关联的 Document。
-3. Participant 使用 Markdown 写作，系统实时更新预览，并允许保存草稿。
-4. Participant 提交 Response，系统再次验证身份、Session 和 Task 状态。
-5. 系统保存最终 Document，将 Response 标记为已提交，并记录提交结果。
-
-如果保存失败，系统保留尚未提交的内容并提示错误；已经提交的 Response 不能被重复提交。
-
-**UC-08 查看实验数据**
-
-1. Researcher 选择一个自己管理的 Study。
-2. 系统验证 Researcher 对该 Study 的访问权限。
-3. 系统读取相关 Participants、Sessions、Tasks 和 Responses。
-4. 系统展示 Study 的参与进度和已提交的写作结果。
-
-Researcher 不能访问自己无权管理的 Study 数据。
+如果 Study 或 Task 已关闭，系统拒绝创建 Workspace。
 
 ## 3. Domain Modeling
 
-Domain Modeling 从 Use Cases 中提取稳定的业务对象、关系和规则，而不是直接设计数据库表。这个系统包含 `User`、`Study`、`Task`、`Session`、`Response` 和 `Document` 六个核心领域对象。
+Domain Modeling 从 Use Cases 中提取稳定的业务对象、关系和规则，而不是直接设计数据库表。这个系统包含 `User`、`Study`、`Task`、`Workspace` 和 `Document` 五个核心领域对象；Participant 和 Researcher 是 `User` 的两种角色。
 
-```text
-User
-└── role: PARTICIPANT | RESEARCHER
-
-Study 1 ── contains ── * Task
-User(PARTICIPANT) 1 ── starts ── * Session
-Session * ── belongs to ── 1 Study
-Session 1 ── records ── * Response
-Response * ── answers ── 1 Task
-Response 1 ── references ── 1 Document
-User(PARTICIPANT) 1 ── owns ── * Document
-User(RESEARCHER) 1 ── manages ── * Study
+```mermaid
+flowchart LR
+    researcher["Researcher (User role)"] -->|"管理"| study["Study"]
+    study -->|"包含"| task["Task"]
+    participant["Participant (User role)"] -->|"拥有"| workspace["Workspace"]
+    workspace -->|"包含"| document["Document"]
+    workspace -.->|"可选关联"| task
 ```
 
-`Study` 表示一项完整的研究设计，`Task` 是其中的具体写作任务，`Session` 表示某位 Participant 的一次参与过程，`Response` 表示该 Session 对某个 Task 的回答。Participant 领取 Task 时，系统创建一个处于草稿状态的 Response；提交后，Response 进入已提交状态。
+`Study` 表示一项完整的研究设计，组织相关 Participants 和 Tasks。例如，“写作约束是否影响创造性”和“时间限制是否影响写作结果”是两个不同的 Studies；每个 Study 可以包含若干具体写作 Tasks。
 
-`Document` 专门承载 Markdown 内容。任务写作中的 Document 由 Response 引用，自由写作中的 Document 则不关联任何 Response。这样，写作内容与实验流程保持分离，同时可以复用同一套 Markdown 编辑能力。
+`Task` 描述 Participant 要完成什么，`Workspace` 是 Participant 完成一次写作的工作空间，`Document` 则承载实际的 Markdown 内容。领取 Task 会创建关联该 Task 的 Workspace；自由写作创建的 Workspace 不关联 Task。
+
+## 4. Module Design
+
+Module Design 从业务能力出发划分职责边界。这里的 Module 是应用内部的一组相关对象和 Use Cases。
+
+| Module | 拥有的对象 | 主要职责 |
+|---|---|---|
+| `Identity` | `User` | 登录、身份、角色权限和 Participant 管理 |
+| `Studies` | `Study`、`Task` | Study 与 Task 的查询和管理 |
+| `Workspaces` | `Workspace` | Workspace 的创建、归属、Task 关联和提交状态 |
+| `CreativeWriting` | `Document` | Markdown Document 的创建、编辑和读取 |
+
+```mermaid
+flowchart TB
+    presentation["Presentation"] --> application["Application Use Cases"]
+    application -->|"身份与权限"| identity["Identity (User)"]
+    application -->|"Study / Task"| studies["Studies"]
+    application -->|"Workspace lifecycle"| workspaces["Workspaces"]
+    application -->|"Markdown Document"| creativeWriting["CreativeWriting"]
+```
+
+每个 Use Case 可以涉及多个 Modules，但通常由一个主 Module 负责协调其业务目标：
+
+| Use Case | 主 Module | 协作 Modules |
+|---|---|---|
+| UC-01 登录系统 | `Identity` | 无 |
+| UC-02 查看 Studies | `Studies` | `Identity` |
+| UC-03 领取 Task | `Workspaces` | `Identity`、`Studies`、`CreativeWriting` |
+| UC-04 自由写作 | `Workspaces` | `Identity`、`CreativeWriting` |
+| UC-05 查看 Workspaces | `Workspaces` | `Identity` |
+| UC-06 编辑并保存 Workspace | `CreativeWriting` | `Identity`、`Workspaces` |
+| UC-07 管理 Study | `Studies` | `Identity` |
+| UC-08 管理 Participants | `Identity` | 无 |
+
+以领取 Task 为例，跨 Module 流程由 Use Case 协调：
+
+```text
+ClaimTask
+├── Identity：确认当前用户是 Participant
+├── Studies：确认 Task 可以领取
+├── Workspaces：创建关联 Task 的 Workspace
+└── CreativeWriting：为 Workspace 创建 Document
+```
+
+Module 边界遵循三条规则：每个领域对象只有一个 owning Module；对象只能由 owning Module 修改；跨 Module 流程通过对方公开的能力协作，而不直接操作其内部数据。
+
+## 5. Data Flow Design
+
+Data Flow Design 描述一次操作进入系统后，数据如何在边界和 Modules 之间流动。此时只引入抽象的 Presentation boundary，不设计具体页面、API、framework 或数据库结构：
+
+```text
+Participant / Researcher
+→ Presentation
+→ Application Use Case
+→ Business Modules
+→ Persistence
+```
+
+这里继续使用 `UC-03`，观察它如何在系统内部流动。
+
+**ClaimTask**
+
+```mermaid
+sequenceDiagram
+    participant ParticipantUser
+    participant WebUI
+    participant ClaimTaskUseCase
+    participant IdentityModule
+    participant StudiesModule
+    participant WorkspacesModule
+    participant WritingModule
+    participant DataStore
+
+    ParticipantUser->>WebUI: Claim Task
+    WebUI->>ClaimTaskUseCase: taskId
+    ClaimTaskUseCase->>IdentityModule: verify Participant
+    IdentityModule-->>ClaimTaskUseCase: identity
+    ClaimTaskUseCase->>StudiesModule: validate Task
+    StudiesModule-->>ClaimTaskUseCase: Task available
+    ClaimTaskUseCase->>WorkspacesModule: create Workspace
+    WorkspacesModule->>DataStore: save Workspace
+    WorkspacesModule-->>ClaimTaskUseCase: workspaceId
+    ClaimTaskUseCase->>WritingModule: create Document
+    WritingModule->>DataStore: save Document
+    WritingModule-->>ClaimTaskUseCase: Document created
+    ClaimTaskUseCase-->>WebUI: workspaceId
+    WebUI-->>ParticipantUser: open Workspace
+```
+
+Workspace 和 Document 共同构成成功结果：如果其中一个创建失败，系统不能留下不完整状态。如何保证这种一致性留到 Technical Design。
+
+这条流程把 `UC-03` 的业务叙述进一步细化为边界和 Modules 之间的协作。到这一阶段只确定逻辑顺序、规则位置和状态变化；HTTP、transaction、database schema 和具体技术栈将在 Technical Design 中决定。
