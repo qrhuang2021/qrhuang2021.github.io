@@ -1,5 +1,13 @@
 export const posts = [
   {
+    slug: 'web-based-user-study-system-code-architecture',
+    title: 'Web-based User Study 系统的代码架构设计',
+    date: '2026-08-15',
+    lang: 'zh-CN',
+    language: '中文',
+    summary: '以 Markdown 创意写作为例，逐步设计包含 Study、Session、Task 和 Response 的多用户 User Study 系统。',
+  },
+  {
     slug: 'deep-learning-project-code-architecture',
     title: '深度学习项目的代码架构',
     date: '2026-08-14',
