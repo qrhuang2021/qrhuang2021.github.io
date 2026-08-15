@@ -1,5 +1,13 @@
 export const posts = [
   {
+    slug: 'dependency-inversion-principle',
+    title: '依赖倒置原则',
+    date: '2026-08-15',
+    lang: 'zh-CN',
+    language: '中文',
+    summary: '从 runtime call 与 source code 两种方向出发，理解 Use Case、Repository abstraction、database implementation 与 composition root 之间的依赖倒置。',
+  },
+  {
     slug: 'web-based-user-study-system-code-architecture',
     title: 'Web-based User Study 系统的代码架构设计',
     date: '2026-08-15',

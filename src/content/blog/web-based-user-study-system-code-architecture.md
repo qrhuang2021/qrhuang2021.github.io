@@ -213,6 +213,8 @@ Persistence
 
 接口围绕稳定的业务动作设计：Module 只修改自身对象，跨 Module 通过公开 API 协作，输入输出不暴露 database model。`DocumentContent`、`credentials` 和 Repository interfaces 分别隔离内容格式、认证方式和持久化实现的变化。
 
+这里还需要区分 runtime call 与 source code dependency。`app` 在运行时必然通过 Persistence API 调用 database，但 Persistence API 究竟应由 `database` 导出，还是由 `app` 定义并让 database 实现，会形成两种不同的依赖方向。这个问题需要先理解 [《依赖倒置原则》](/#/blog/dependency-inversion-principle)，再在 Persistence API 的具体设计中继续展开。
+
 例如，`Workspace` Module 公开并协调 `StartTask`：
 
 ```text
