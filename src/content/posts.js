@@ -1,5 +1,13 @@
 export const posts = [
   {
+    slug: 'codex-sdk-introduction',
+    title: 'Codex SDK 入门介绍',
+    date: '2026-08-19',
+    lang: 'zh-CN',
+    language: '中文',
+    summary: '从 Codex、Thread 和 Turn 的最小 mental model 出发，逐步理解 Codex SDK 的核心运行机制。',
+  },
+  {
     slug: 'dependency-inversion-principle',
     title: '依赖倒置原则',
     date: '2026-08-15',
